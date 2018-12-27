@@ -169,9 +169,11 @@
     <ClCompile Include="scts\test.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="scts\basic_value.h" />
     <ClInclude Include="scts\formatters.h" />
     <ClInclude Include="scts\helpers.h" />
     <ClInclude Include="scts\io.h" />
+    <ClInclude Include="scts\json_formatter.h" />
     <ClInclude Include="scts\object_descriptor.h" />
     <ClInclude Include="scts\register_type.h" />
     <ClInclude Include="scts\scts.h" />

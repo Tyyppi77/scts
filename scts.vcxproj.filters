@@ -7,34 +7,38 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="scts/scts.h">
+    <ClInclude Include="scts\formatters.h">
       <Filter>Files</Filter>
     </ClInclude>
-    <ClInclude Include="scts/serializer.h">
+    <ClInclude Include="scts\helpers.h">
       <Filter>Files</Filter>
     </ClInclude>
-    <ClInclude Include="scts/stream.h">
+    <ClInclude Include="scts\io.h">
       <Filter>Files</Filter>
     </ClInclude>
-    <ClInclude Include="scts/formatters.h">
+    <ClInclude Include="scts\object_descriptor.h">
       <Filter>Files</Filter>
     </ClInclude>
-    <ClInclude Include="scts/object_descriptor.h">
+    <ClInclude Include="scts\register_type.h">
       <Filter>Files</Filter>
     </ClInclude>
-    <ClInclude Include="scts/io.h">
+    <ClInclude Include="scts\scts.h">
       <Filter>Files</Filter>
     </ClInclude>
-    <ClInclude Include="scts/register_type.h">
+    <ClInclude Include="scts\serializer.h">
       <Filter>Files</Filter>
     </ClInclude>
-    <ClInclude Include="scts/helpers.h">
+    <ClInclude Include="scts\stream.h">
+      <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scts\json_formatter.h">
+      <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scts\basic_value.h">
       <Filter>Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="scts/test.cpp">
-      <Filter>Files</Filter>
-    </ClCompile>
+    <ClCompile Include="scts\test.cpp" />
   </ItemGroup>
 </Project>
