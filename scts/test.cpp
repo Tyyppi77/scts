@@ -2,6 +2,8 @@
 #include <vector>
 #include <array>
 #include <map>
+#include <optional>
+#include <memory>
 
 #include "scts.h"
 
@@ -31,13 +33,15 @@ template <> struct scts::register_type<Collider> : scts::allow_serialization {
 struct Entity {
 	Collider Box;
 	int Health = 100;
+	std::optional<int> AdditionalData = std::nullopt;
 };
 
 template <> struct scts::register_type<Entity> : scts::allow_serialization {
 	static constexpr scts::object_descriptor<Entity,
 		scts::members<
 		scts::member<&Entity::Box>,
-		scts::member<&Entity::Health>>> descriptor{ "Box", "Health" };
+		scts::member<&Entity::AdditionalData>,
+		scts::member<&Entity::Health>>> descriptor{ "Box", "AdditionalData", "Health" };
 };
 
 struct Player : Entity {
@@ -72,6 +76,7 @@ int main()
 		Player e{
 			Collider{ Vector2{17, 40}, Vector2{1405, 70043} },
 			4634,
+			13423,
 			69350.0f,
 			"Jeff",
 			{ Vector2{325, 2350}, Vector2{-1000, -100403200} }

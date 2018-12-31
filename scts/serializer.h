@@ -24,4 +24,10 @@ namespace scts {
 		Formatter::prepare_read(stream);
 		return scts::register_type<O>::descriptor.load<Formatter>(object, stream);
 	}
+
+	template <typename O, typename Formatter = scts::json_formatter>
+	inline O& deserialize_do_not_consume(O& object, const scts::in_stream& stream) {
+		auto copy = stream;
+		return deserialize<O, Formatter>(object, copy);
+	}
 }

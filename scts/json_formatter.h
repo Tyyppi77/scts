@@ -61,19 +61,23 @@ namespace scts {
 			return section;
 		}
 
-		template <typename T>
+		template <typename T, typename = void>
 		struct basic_value_reader {
 			static void read(T& value, const scts::in_stream& stream) {
 				value = convert_stream_to_value<T>(stream);
 			}
 		private:
-			template <typename V> 
+			template <typename V, typename = void> 
 			static V convert_stream_to_value(const scts::in_stream& stream) {
-				static_assert(false);
+				static_assert(false, "Missing stream to value converter");
 			}
 			template <> 
 			static int convert_stream_to_value<int>(const scts::in_stream& stream) {
 				return std::stoi(stream);
+			}
+			template <>
+			static uint8_t convert_stream_to_value<uint8_t>(const scts::in_stream& stream) {
+				return static_cast<uint8_t>(std::stoi(stream));
 			}
 			template <> 
 			static bool convert_stream_to_value<bool>(const scts::in_stream& stream) {
@@ -145,6 +149,26 @@ namespace scts {
 			}
 		};
 
+		template <typename Enum>
+		struct basic_value_reader<Enum, typename std::enable_if_t<std::is_enum_v<Enum>>> {
+			static void read(Enum& value, const scts::in_stream& stream) {
+				value = static_cast<Enum>(std::stoi(stream));
+			}
+		};
+
+		template <typename T>
+		struct basic_value_reader<std::optional<T>> {
+			static void read(std::optional<T>& value, const scts::in_stream& stream) {
+				if (stream == "null") {
+					value = std::nullopt;
+				}
+				else {
+					value = T{};
+					read_value(value.value(), stream);
+				}
+			}
+		};
+
 		template <typename T>
 		static typename std::enable_if<is_basic_value<T>::value, void>::type read_value(T& member, const scts::in_stream& stream) {
 			return basic_value_reader<T>::template read(member, stream);
@@ -178,7 +202,7 @@ namespace scts {
 			return stream;
 		}
 
-		template <typename T>
+		template <typename T, typename = void>
 		struct basic_value_writer {
 			static scts::out_stream& write(const T& value, scts::out_stream& stream, bool is_last) {
 				write_really_basic_value(value, stream);
@@ -190,6 +214,10 @@ namespace scts {
 			template <typename T> 
 			static void write_really_basic_value(const T& value, scts::out_stream& stream) {
 				stream << value;
+			}
+			template <>
+			static void write_really_basic_value<uint8_t>(const uint8_t& value, scts::out_stream& stream) {
+				stream << static_cast<int>(value);
 			}
 			template <>
 			static void write_really_basic_value<bool>(const bool& value, scts::out_stream& stream) {
@@ -235,6 +263,29 @@ namespace scts {
 					write_value<V>((*it).second, stream, std::next(it) == values.end());
 				}
 				stream << "}";
+				write_separator_if_required(stream, is_last);
+				return stream;
+			}
+		};
+
+		template <typename Enum>
+		struct basic_value_writer<Enum, std::enable_if_t<std::is_enum_v<Enum>>> {
+			static scts::out_stream& write(const Enum& value, scts::out_stream& stream, bool is_last) {
+				stream << static_cast<int>(value);
+				write_separator_if_required(stream, is_last);
+				return stream;
+			}
+		};
+
+		template <typename T>
+		struct basic_value_writer<std::optional<T>> {
+			static scts::out_stream& write(const std::optional<T>& value, scts::out_stream& stream, bool is_last) {
+				if (value.has_value()) {
+					write_value<T>(value.value(), stream, true);
+				}
+				else {
+					stream << "null";
+				}
 				write_separator_if_required(stream, is_last);
 				return stream;
 			}
