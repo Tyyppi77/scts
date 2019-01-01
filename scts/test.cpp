@@ -58,6 +58,8 @@ struct Player : Entity {
 		std::pair{"Normal", 1.0f},
 		std::pair{"Sloow", 1.0f / 3.0f}
 	};
+
+	Entity* Parent = nullptr;
 };
 
 template <> struct scts::register_type<Player> : scts::allow_serialization {
@@ -67,13 +69,13 @@ template <> struct scts::register_type<Player> : scts::allow_serialization {
 		scts::member<&Player::Name>,
 		scts::member<&Player::LastPositions>,
 		scts::member<&Player::CoolStates>,
-		scts::member<&Player::SpeedSettings>>,
-		scts::inherits_from<Entity>> descriptor{ "Damage", "Name", "LastPositions", "CoolStates", "SpeedSettings" };
+		scts::member<&Player::SpeedSettings>,
+		scts::member<&Player::Parent>>,
+		scts::inherits_from<Entity>> descriptor{ "Damage", "Name", "LastPositions", "CoolStates", "SpeedSettings", "Parent" };
 };
 
 int main()
 {
-	/*
 	scts::out_stream s;
 	{
 		Player e{
@@ -82,7 +84,7 @@ int main()
 			13423,
 			69350.0f,
 			"Jeff",
-			//{ Vector2{325, 2350}, Vector2{-1000, -100403200} }
+			{ Vector2{325, 2350}, Vector2{-1000, -100403200} }
 		};
 		e.CoolStates[0] = e.CoolStates[1] = e.CoolStates[2] = false;
 		e.SpeedSettings.clear();
@@ -91,12 +93,10 @@ int main()
 		std::cout << "Initial Data:\n";
 		std::cout << s.str() << "\n";
 	}
-	*/
-	const scts::in_stream stream = "{\"Box\":{\"Position\":{\"X\":17,\"Y\": 40},\"Size\":{\"X\":1405,\"Y\":70043}},\"AdditionalData\":13423,\"Health\":4634,\"Damage\":69350,\"Name\":\"Je{ff\",\"LastPositions\":[{\"X\":0,\"Y\":0},{\"X\":0,\"Y\":0},{\"X\":0,\"Y\":0},{\"X\":0,\"Y\":0},{\"X\":0,\"Y\":0}],\"CoolStates\":[false,false,false],\"SpeedSettings\":{\"Stuff\":15}}";
 
 	Player n;
 	{
-		auto serialized = stream;
+		auto serialized = s.get_in_stream();
 		scts::deserialize(n, serialized);
 	}
 	scts::out_stream another;

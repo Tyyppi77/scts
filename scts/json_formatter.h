@@ -161,6 +161,20 @@ namespace scts {
 		};
 
 		template <typename T>
+		struct basic_value_reader<T*> {
+			static void read(T*& value, const scts::in_stream& stream) {
+				if (stream == "null") {
+					value = nullptr;
+				}
+				else {
+					assert(value == nullptr);  // TODO: Decide how to handle memory allocation inside the serializer.
+					value = new T();
+					read_value(*value, stream);
+				}
+			}
+		};
+
+		template <typename T>
 		struct basic_value_reader<std::optional<T>> {
 			static void read(std::optional<T>& value, const scts::in_stream& stream) {
 				if (stream == "null") {
@@ -276,6 +290,21 @@ namespace scts {
 		struct basic_value_writer<Enum, std::enable_if_t<std::is_enum_v<Enum>>> {
 			static scts::out_stream& write(const Enum& value, scts::out_stream& stream, bool is_last) {
 				stream << static_cast<int>(value);
+				write_separator_if_required(stream, is_last);
+				return stream;
+			}
+		};
+
+		template <typename T>
+		struct basic_value_writer<T*> {
+			static scts::out_stream& write(const T* value, scts::out_stream& stream, bool is_last) {
+				if (value == nullptr) {
+					stream << "null";
+				}
+				else {
+					write_value<T>(*value, stream, true);
+				}
+
 				write_separator_if_required(stream, is_last);
 				return stream;
 			}
