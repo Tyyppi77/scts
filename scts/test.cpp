@@ -61,6 +61,7 @@ struct Player : Entity {
 
 	Entity* Parent = nullptr;
 	int Constants[3] = { 12, 3, 513 };
+	std::unique_ptr<Collider> PointerBox = std::make_unique<Collider>();
 };
 
 template <> struct scts::register_type<Player> : scts::allow_serialization {
@@ -72,8 +73,9 @@ template <> struct scts::register_type<Player> : scts::allow_serialization {
 		scts::member<&Player::CoolStates>,
 		scts::member<&Player::SpeedSettings>,
 		scts::member<&Player::Parent>,
-		scts::member<&Player::Constants>>,
-		scts::inherits_from<Entity>> descriptor{ "Damage", "Name", "LastPositions", "CoolStates", "SpeedSettings", "Parent", "Constants" };
+		scts::member<&Player::Constants>,
+		scts::member<&Player::PointerBox>>,
+		scts::inherits_from<Entity>> descriptor{ "Damage", "Name", "LastPositions", "CoolStates", "SpeedSettings", "Parent", "Constants", "PointerBox" };
 };
 
 int main()

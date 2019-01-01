@@ -200,6 +200,19 @@ namespace scts {
 		};
 
 		template <typename T>
+		struct basic_value_reader<std::unique_ptr<T>> {
+			static void read(std::unique_ptr<T>& value, const scts::in_stream& stream) {
+				if (stream == "null") {
+					value = nullptr;
+				}
+				else {
+					value = std::make_unique<T>();
+					read_value(*value.get(), stream);  // Dereferences because the pointer pipeline currently manages memory.
+				}
+			}
+		};
+
+		template <typename T>
 		static typename std::enable_if<is_basic_value<T>::value, void>::type read_value(T& member, const scts::in_stream& stream) {
 			return basic_value_reader<T>::template read(member, stream);
 		}
@@ -340,6 +353,13 @@ namespace scts {
 				}
 				write_separator_if_required(stream, is_last);
 				return stream;
+			}
+		};
+
+		template <typename T>
+		struct basic_value_writer<std::unique_ptr<T>> {
+			static scts::out_stream& write(const std::unique_ptr<T>& value, scts::out_stream& stream, bool is_last) {
+				return basic_value_writer<T*>::write(value.get(), stream, is_last);
 			}
 		};
 

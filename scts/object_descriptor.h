@@ -71,6 +71,9 @@ namespace scts {
 		static_assert(scts::is_basic_value_v<value_type> || scts::is_registered_type_v<value_type>,
 			"member needs to be a basic value or a registered type!");
 
+		// Currently the initialization in the serializer requires that all objects are default constructible.
+		static_assert(std::is_default_constructible_v<value_type>, "member needs to be default constructible!");
+
 		template <typename O>
 		static constexpr value_type& get(O& object) noexcept { return object.*Ptr; }
 		template <typename O>

@@ -4,6 +4,7 @@
 #include <array>
 #include <string>
 #include <vector>
+#include <memory>
 #include <cstdint>
 #include <optional>
 #include <type_traits>
@@ -47,4 +48,8 @@ namespace scts {
 	struct is_basic_value<std::map<std::string, V>, typename std::enable_if_t<is_serializable_v<V>>> : std::true_type { };
 	template <typename T, std::size_t C> 
 	struct is_basic_value<std::array<T, C>, typename std::enable_if_t<is_serializable_v<T>>> : std::true_type { };
+
+	// Standard library smart pointers.
+	template <typename T>
+	struct is_basic_value<std::unique_ptr<T>, typename std::enable_if_t<is_serializable_v<T>>> : std::true_type { };
 }
