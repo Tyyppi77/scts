@@ -34,15 +34,19 @@ namespace scts {
 		static scts::in_stream read_next_section_and_consume_stream(scts::in_stream& stream, std::size_t start) {
 			const std::size_t comma_position = [&]() {
 				std::size_t open_braces = 0;
+				bool is_inside_string = false;
 				for (std::size_t i = start; i < stream.length(); ++i) {
 					const auto current = stream.at(i);
 					if (current == ',' && open_braces == 0) {
 						return i;
 					}
-					else if (current == '{' || current == '[') {
+					else if (current == '"') {
+						is_inside_string = !is_inside_string;
+					}
+					else if (!is_inside_string && (current == '{' || current == '[')) {
 						open_braces++;
 					}
-					else if (current == '}' || current == ']') {
+					else if (!is_inside_string && (current == '}' || current == ']')) {
 						assert(open_braces > 0);
 						open_braces--;
 					}

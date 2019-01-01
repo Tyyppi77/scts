@@ -30,6 +30,10 @@ template <> struct scts::register_type<Collider> : scts::allow_serialization {
 		scts::member<&Collider::Size>>> descriptor{ "Position", "Size" };
 };
 
+struct NotSerializable {
+
+};
+
 struct Entity {
 	Collider Box;
 	int Health = 100;
@@ -69,8 +73,7 @@ template <> struct scts::register_type<Player> : scts::allow_serialization {
 
 int main()
 {
-	// TODO: Loading assumes order!
-
+	/*
 	scts::out_stream s;
 	{
 		Player e{
@@ -79,7 +82,7 @@ int main()
 			13423,
 			69350.0f,
 			"Jeff",
-			{ Vector2{325, 2350}, Vector2{-1000, -100403200} }
+			//{ Vector2{325, 2350}, Vector2{-1000, -100403200} }
 		};
 		e.CoolStates[0] = e.CoolStates[1] = e.CoolStates[2] = false;
 		e.SpeedSettings.clear();
@@ -88,9 +91,12 @@ int main()
 		std::cout << "Initial Data:\n";
 		std::cout << s.str() << "\n";
 	}
+	*/
+	const scts::in_stream stream = "{\"Box\":{\"Position\":{\"X\":17,\"Y\": 40},\"Size\":{\"X\":1405,\"Y\":70043}},\"AdditionalData\":13423,\"Health\":4634,\"Damage\":69350,\"Name\":\"Je{ff\",\"LastPositions\":[{\"X\":0,\"Y\":0},{\"X\":0,\"Y\":0},{\"X\":0,\"Y\":0},{\"X\":0,\"Y\":0},{\"X\":0,\"Y\":0}],\"CoolStates\":[false,false,false],\"SpeedSettings\":{\"Stuff\":15}}";
+
 	Player n;
 	{
-		auto serialized = s.get_in_stream();
+		auto serialized = stream;
 		scts::deserialize(n, serialized);
 	}
 	scts::out_stream another;

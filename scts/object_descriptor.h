@@ -8,19 +8,6 @@
 #include "register_type.h"
 
 namespace scts {
-	template <auto Ptr>
-	struct member {
-		using value_type = typename scts::deduce_member_ptr_type<decltype(Ptr)>::type;
-
-		static_assert(scts::is_basic_value_v<value_type> || scts::is_registered_type_v<value_type>,
-			"member needs to be a basic value or a registered type!");
-
-		template <typename O>
-		static constexpr value_type& get(O& object) noexcept { return object.*Ptr; }
-		template <typename O>
-		static constexpr const value_type& get(const O& object) noexcept { return object.*Ptr; }
-	};
-
 	template <typename... Parents>
 	struct inherits_from {
 		template <typename O, typename Formatter>
@@ -75,6 +62,19 @@ namespace scts {
 				scts::register_type<Parent>::descriptor.load<Formatter>(object, stream);
 			}
 		};
+	};
+
+	template <auto Ptr>
+	struct member {
+		using value_type = typename scts::deduce_member_ptr_type<decltype(Ptr)>::type;
+
+		static_assert(scts::is_basic_value_v<value_type> || scts::is_registered_type_v<value_type>,
+			"member needs to be a basic value or a registered type!");
+
+		template <typename O>
+		static constexpr value_type& get(O& object) noexcept { return object.*Ptr; }
+		template <typename O>
+		static constexpr const value_type& get(const O& object) noexcept { return object.*Ptr; }
 	};
 
 	template <typename... Members>
