@@ -32,9 +32,11 @@ namespace scts {
 	template <typename E> 
 	struct is_basic_value<E, typename std::enable_if_t<std::is_enum_v<E>>> : std::true_type { };
 
-	// Pointers.
+	// C-style pointers and arrays.
 	template <typename T> 
 	struct is_basic_value<T*, typename std::enable_if_t<is_serializable_v<T>>> : std::true_type { };
+	template <typename T, std::size_t C>
+	struct is_basic_value<T[C], typename std::enable_if_t<is_serializable_v<T>>> : std::true_type { };
 
 	// Standard library containers and classes.
 	template <typename T>

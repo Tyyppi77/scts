@@ -174,6 +174,18 @@ namespace scts {
 			}
 		};
 
+		template <typename T, std::size_t C>
+		struct basic_value_reader<T[C]> {
+			static void read(T (&array)[C], const scts::in_stream& stream) {
+				auto copy = stream;
+				prepare_stream_for_list_processing(copy);
+				for (std::size_t i = 0; i < C; ++i) {
+					const auto section = read_next_section_and_consume_stream(copy, 0);
+					read_value(array[i], section);
+				}
+			}
+		};
+
 		template <typename T>
 		struct basic_value_reader<std::optional<T>> {
 			static void read(std::optional<T>& value, const scts::in_stream& stream) {
@@ -247,21 +259,21 @@ namespace scts {
 			}
 		};
 
+		template <typename Iterator>
+		static scts::out_stream& write_list(const Iterator& begin, const Iterator& end, scts::out_stream& stream, bool is_last) {
+			stream << '[';
+			for (auto current = begin; current != end; ++current) {
+				write_value(*current, stream, std::next(current) == end);
+			}
+			stream << ']';
+			write_separator_if_required(stream, is_last);
+			return stream;
+		}
+
 		template <typename T>
 		struct basic_list_writer {
 			static scts::out_stream& write(const T& values, scts::out_stream& stream, bool is_last) {
 				return write_list(values.begin(), values.end(), stream, is_last);
-			}
-		private:
-			template <typename Iterator> 
-			static scts::out_stream& write_list(const Iterator& begin, const Iterator& end, scts::out_stream& stream, bool is_last) {
-				stream << '[';
-				for (auto current = begin; current != end; ++current) {
-					write_value(*current, stream, std::next(current) == end);
-				}
-				stream << ']';
-				write_separator_if_required(stream, is_last);
-				return stream;
 			}
 		};
 
@@ -307,6 +319,13 @@ namespace scts {
 
 				write_separator_if_required(stream, is_last);
 				return stream;
+			}
+		};
+
+		template <typename T, std::size_t C>
+		struct basic_value_writer<T[C]> : basic_list_writer<T> {
+			static scts::out_stream& write(const T (&values)[C], scts::out_stream& stream, bool is_last) {
+				return write_list(std::begin(values), std::end(values), stream, is_last);
 			}
 		};
 
