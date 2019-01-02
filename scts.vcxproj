@@ -171,7 +171,7 @@
     <ClCompile Include="tests\tests_object_descriptor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="scts\basic_value.h" />
+    <ClInclude Include="scts\builtin_types.h" />
     <ClInclude Include="scts\formatters.h" />
     <ClInclude Include="scts\helpers.h" />
     <ClInclude Include="scts\io.h" />

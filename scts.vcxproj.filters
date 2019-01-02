@@ -37,13 +37,13 @@
     <ClInclude Include="scts\json_formatter.h">
       <Filter>Files</Filter>
     </ClInclude>
-    <ClInclude Include="scts\basic_value.h">
-      <Filter>Files</Filter>
-    </ClInclude>
     <ClInclude Include="tests\catch.hpp">
       <Filter>Tests</Filter>
     </ClInclude>
     <ClInclude Include="scts\lexical_cast.h">
+      <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scts\builtin_types.h">
       <Filter>Files</Filter>
     </ClInclude>
   </ItemGroup>

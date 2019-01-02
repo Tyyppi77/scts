@@ -1,8 +1,8 @@
 #pragma once
 
 #include "stream.h"
-#include "basic_value.h"
 #include "lexical_cast.h"
+#include "builtin_types.h"
 
 #include <cassert>
 
@@ -69,7 +69,7 @@ namespace scts {
 		}
 
 		template <typename T, typename = void>
-		struct basic_value_reader {
+		struct builtin_type_reader {
 			static void read(T& value, const scts::in_stream& stream) {
 				value = convert_stream_to_value<T>(stream);
 			}
@@ -95,7 +95,7 @@ namespace scts {
 		}
 
 		template <typename T>
-		struct basic_value_reader<std::vector<T>> {
+		struct builtin_type_reader<std::vector<T>> {
 			static void read(std::vector<T>& vector, const scts::in_stream& stream) {
 				vector.clear();
 				auto copy = stream;
@@ -110,7 +110,7 @@ namespace scts {
 		};
 
 		template <typename T, std::size_t C>
-		struct basic_value_reader<std::array<T, C>> {
+		struct builtin_type_reader<std::array<T, C>> {
 			static void read(std::array<T, C>& array, const scts::in_stream& stream) {
 				auto copy = stream;
 				prepare_stream_for_list_processing(copy);
@@ -122,7 +122,7 @@ namespace scts {
 		};
 
 		template <typename V>
-		struct basic_value_reader<std::map<std::string, V>> {
+		struct builtin_type_reader<std::map<std::string, V>> {
 			static void read(std::map<std::string, V>& map, const scts::in_stream& stream) {
 				map.clear();
 				auto copy = stream;
@@ -141,14 +141,14 @@ namespace scts {
 		};
 
 		template <typename Enum>
-		struct basic_value_reader<Enum, typename std::enable_if_t<std::is_enum_v<Enum>>> {
+		struct builtin_type_reader<Enum, typename std::enable_if_t<std::is_enum_v<Enum>>> {
 			static void read(Enum& value, const scts::in_stream& stream) {
 				value = static_cast<Enum>(std::stoi(stream));
 			}
 		};
 
 		template <typename T>
-		struct basic_value_reader<T*> {
+		struct builtin_type_reader<T*> {
 			static void read(T*& value, const scts::in_stream& stream) {
 				if (stream == "null") {
 					value = nullptr;
@@ -162,7 +162,7 @@ namespace scts {
 		};
 
 		template <typename T, std::size_t C>
-		struct basic_value_reader<T[C]> {
+		struct builtin_type_reader<T[C]> {
 			static void read(T (&array)[C], const scts::in_stream& stream) {
 				auto copy = stream;
 				prepare_stream_for_list_processing(copy);
@@ -174,7 +174,7 @@ namespace scts {
 		};
 
 		template <typename T>
-		struct basic_value_reader<std::optional<T>> {
+		struct builtin_type_reader<std::optional<T>> {
 			static void read(std::optional<T>& value, const scts::in_stream& stream) {
 				if (stream == "null") {
 					value = std::nullopt;
@@ -187,7 +187,7 @@ namespace scts {
 		};
 
 		template <typename T>
-		struct basic_value_reader<std::unique_ptr<T>> {
+		struct builtin_type_reader<std::unique_ptr<T>> {
 			static void read(std::unique_ptr<T>& value, const scts::in_stream& stream) {
 				if (stream == "null") {
 					value = nullptr;
@@ -200,12 +200,12 @@ namespace scts {
 		};
 
 		template <typename T>
-		static typename std::enable_if<is_basic_value<T>::value, void>::type read_value(T& member, const scts::in_stream& stream) {
-			return basic_value_reader<T>::template read(member, stream);
+		static typename std::enable_if<is_builtin_type<T>::value, void>::type read_value(T& member, const scts::in_stream& stream) {
+			return builtin_type_reader<T>::template read(member, stream);
 		}
 
 		template <typename T>
-		static typename std::enable_if<!is_basic_value<T>::value, void>::type read_value(T& member, const scts::in_stream& stream) {
+		static typename std::enable_if<!is_builtin_type<T>::value, void>::type read_value(T& member, const scts::in_stream& stream) {
 			auto copy = stream;
 			prepare_read(copy);
 			scts::register_type<T>::descriptor.load<json_reader>(member, copy);
@@ -235,7 +235,7 @@ namespace scts {
 		}
 
 		template <typename T, typename = void>
-		struct basic_value_writer {
+		struct builtin_type_writer {
 			static scts::out_stream& write(const T& value, scts::out_stream& stream, bool is_last) {
 				write_really_basic_value(value, stream);
 				write_separator_if_required(stream, is_last);
@@ -280,13 +280,13 @@ namespace scts {
 		};
 
 		template <typename T>
-		struct basic_value_writer<std::vector<T>> : basic_list_writer<std::vector<T>> { };
+		struct builtin_type_writer<std::vector<T>> : basic_list_writer<std::vector<T>> { };
 
 		template <typename T, std::size_t C>
-		struct basic_value_writer<std::array<T, C>> : basic_list_writer<std::array<T, C>> { };
+		struct builtin_type_writer<std::array<T, C>> : basic_list_writer<std::array<T, C>> { };
 
 		template <typename V>
-		struct basic_value_writer<std::map<std::string, V>> {
+		struct builtin_type_writer<std::map<std::string, V>> {
 			static scts::out_stream& write(const std::map<std::string, V>& values, scts::out_stream& stream, bool is_last) {
 				stream << "{";
 				for (auto it = values.begin(); it != values.end(); ++it) {
@@ -301,7 +301,7 @@ namespace scts {
 		};
 
 		template <typename Enum>
-		struct basic_value_writer<Enum, std::enable_if_t<std::is_enum_v<Enum>>> {
+		struct builtin_type_writer<Enum, std::enable_if_t<std::is_enum_v<Enum>>> {
 			static scts::out_stream& write(const Enum& value, scts::out_stream& stream, bool is_last) {
 				stream << static_cast<int>(value);
 				write_separator_if_required(stream, is_last);
@@ -310,7 +310,7 @@ namespace scts {
 		};
 
 		template <typename T>
-		struct basic_value_writer<T*> {
+		struct builtin_type_writer<T*> {
 			static scts::out_stream& write(const T* value, scts::out_stream& stream, bool is_last) {
 				if (value == nullptr) {
 					stream << "null";
@@ -325,14 +325,14 @@ namespace scts {
 		};
 
 		template <typename T, std::size_t C>
-		struct basic_value_writer<T[C]> : basic_list_writer<T> {
+		struct builtin_type_writer<T[C]> : basic_list_writer<T> {
 			static scts::out_stream& write(const T (&values)[C], scts::out_stream& stream, bool is_last) {
 				return write_list(std::begin(values), std::end(values), stream, is_last);
 			}
 		};
 
 		template <typename T>
-		struct basic_value_writer<std::optional<T>> {
+		struct builtin_type_writer<std::optional<T>> {
 			static scts::out_stream& write(const std::optional<T>& value, scts::out_stream& stream, bool is_last) {
 				if (value.has_value()) {
 					write_value<T>(value.value(), stream, true);
@@ -346,19 +346,19 @@ namespace scts {
 		};
 
 		template <typename T>
-		struct basic_value_writer<std::unique_ptr<T>> {
+		struct builtin_type_writer<std::unique_ptr<T>> {
 			static scts::out_stream& write(const std::unique_ptr<T>& value, scts::out_stream& stream, bool is_last) {
-				return basic_value_writer<T*>::write(value.get(), stream, is_last);
+				return builtin_type_writer<T*>::write(value.get(), stream, is_last);
 			}
 		};
 
 		template <typename T>
-		static typename std::enable_if<is_basic_value<T>::value, scts::out_stream&>::type write_value(const T& value, scts::out_stream& stream, bool is_last) {
-			return basic_value_writer<T>::write(value, stream, is_last);
+		static typename std::enable_if<is_builtin_type<T>::value, scts::out_stream&>::type write_value(const T& value, scts::out_stream& stream, bool is_last) {
+			return builtin_type_writer<T>::write(value, stream, is_last);
 		}
 
 		template <typename T>
-		static typename std::enable_if<!is_basic_value<T>::value, scts::out_stream&>::type write_value(const T& value, scts::out_stream& stream, bool is_last) {
+		static typename std::enable_if<!is_builtin_type<T>::value, scts::out_stream&>::type write_value(const T& value, scts::out_stream& stream, bool is_last) {
 			stream << "{";
 			scts::register_type<T>::descriptor.save<json_writer>(value, stream);
 			stream << "}";
