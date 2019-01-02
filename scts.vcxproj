@@ -100,7 +100,7 @@
       <EnablePREfast>true</EnablePREfast>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,7 +137,7 @@
       <EnablePREfast>true</EnablePREfast>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -166,7 +166,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="scts\test.cpp" />
+    <ClCompile Include="tests\tests_main.cpp" />
+    <ClCompile Include="tests\tests_object_descriptor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scts\basic_value.h" />
@@ -179,6 +180,7 @@
     <ClInclude Include="scts\scts.h" />
     <ClInclude Include="scts\serializer.h" />
     <ClInclude Include="scts\stream.h" />
+    <ClInclude Include="tests\catch.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

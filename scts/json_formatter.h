@@ -7,6 +7,8 @@
 
 namespace scts {
 	struct json_reader {
+		static constexpr bool requires_names = true;
+
 		static void prepare_read(scts::in_stream& stream) {
 			const auto starts_with_brace = stream.front() == '{';
 			const auto ends_with_brace = stream.back() == '}';
@@ -226,7 +228,9 @@ namespace scts {
 	};
 
 	struct json_writer {
-		static void pre_write(scts::out_stream& stream) { stream << "{"; }
+		static constexpr bool requires_names = true;
+
+		static void prepare_write(scts::out_stream& stream) { stream << "{"; }
 		static void post_write(scts::out_stream& stream) { stream << "}"; }
 
 		template <typename T>
@@ -378,5 +382,7 @@ namespace scts {
 		}
 	};
 
-	struct json_formatter : json_writer, json_reader { };
+	struct json_formatter : json_writer, json_reader { 
+		static constexpr bool requires_names = true;
+	};
 }

@@ -87,21 +87,26 @@ namespace scts {
 
 		template <typename O, typename Formatter>
 		static scts::out_stream& save(const O& object, scts::out_stream& stream, const name_container& names) {
-			using writer = basic_writer<O, name_container, Formatter>;
-			return writer::template write<Members...>(object, stream, names, 0);
+			using correct_writer = std::conditional_t<Formatter::requires_names, writer<O, name_container, Formatter>, writer_no_names<O, Formatter>>;
+			return correct_writer::template write<Members...>(object, stream, names, 0);
 		}
 
 		template <typename O, typename Formatter>
 		static O& load(O& object, scts::in_stream& stream) {
-			using reader = basic_reader<O, Formatter>;
-			return reader::template read<Members...>(object, stream);
+			using correct_reader = reader<O, Formatter>;
+			return correct_reader::template read<Members...>(object, stream);
 		}
 	};
 
 	template <typename O, typename Members, typename InheritsFrom = inherits_from<>>
 	struct object_descriptor {
+		// It's possible to construct an object descriptor without any names.
+		// That will restrict the serialization to formatters that only serialize without names, though.
+		constexpr object_descriptor() noexcept : has_names(false) { }
+
 		template <typename... Names>
-		constexpr object_descriptor(Names... names) noexcept : m_names({ names... }) { 
+		constexpr object_descriptor(Names... names) noexcept 
+			: has_names(true), m_names({ names... }) {
 			static_assert(sizeof...(Names) == Members::member_count, "object_descriptor needs the correct amount of names");
 		}
 
@@ -116,6 +121,8 @@ namespace scts {
 			InheritsFrom::template read<O, Formatter>(object, stream);
 			return Members::template load<O, Formatter>(object, stream);
 		}
+
+		const bool has_names;
 	private:
 		const typename Members::name_container m_names;
 	};
