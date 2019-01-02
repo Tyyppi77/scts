@@ -22,12 +22,10 @@ namespace scts {
 	inline constexpr bool is_serializable_v = is_basic_value_v<T> || is_registered_type_v<T>;
 
 	// Basic data types.
-	template <> struct is_basic_value<int> : std::true_type { };
-	template <> struct is_basic_value<bool> : std::true_type { };
-	template <> struct is_basic_value<float> : std::true_type { };
-	template <> struct is_basic_value<double> : std::true_type { };
-	template <> struct is_basic_value<uint8_t> : std::true_type { };
+	// TODO: All string-likes.
 	template <> struct is_basic_value<std::string> : std::true_type { };
+	// Note that bool is an arithmetic type, but will most likely require special handling in the formatters.
+	template <typename T> struct is_basic_value<T, typename std::enable_if_t<std::is_arithmetic_v<T>>> : std::true_type { };
 
 	// Enums.
 	template <typename E> 

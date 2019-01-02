@@ -2,6 +2,7 @@
 
 #include "stream.h"
 #include "basic_value.h"
+#include "lexical_cast.h"
 
 #include <cassert>
 
@@ -75,27 +76,11 @@ namespace scts {
 		private:
 			template <typename V, typename = void> 
 			static V convert_stream_to_value(const scts::in_stream& stream) {
-				static_assert(false, "Missing stream to value converter");
-			}
-			template <> 
-			static int convert_stream_to_value<int>(const scts::in_stream& stream) {
-				return std::stoi(stream);
+				return lexical_cast<T>(stream);
 			}
 			template <>
-			static uint8_t convert_stream_to_value<uint8_t>(const scts::in_stream& stream) {
-				return static_cast<uint8_t>(std::stoi(stream));
-			}
-			template <> 
 			static bool convert_stream_to_value<bool>(const scts::in_stream& stream) {
 				return stream == "true";
-			}
-			template <> 
-			static float convert_stream_to_value<float>(const scts::in_stream& stream) {
-				return std::stof(stream);
-			}
-			template <> 
-			static double convert_stream_to_value<double>(const scts::in_stream& stream) {
-				return std::stod(stream);
 			}
 			template <> 
 			static std::string convert_stream_to_value<std::string>(const scts::in_stream& stream) {
