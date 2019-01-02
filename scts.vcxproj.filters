@@ -43,12 +43,18 @@
     <ClInclude Include="tests\catch.hpp">
       <Filter>Tests</Filter>
     </ClInclude>
+    <ClInclude Include="scts\lexical_cast.h">
+      <Filter>Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tests\tests_main.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="tests\tests_object_descriptor.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\tests_lexical_cast.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
   </ItemGroup>
