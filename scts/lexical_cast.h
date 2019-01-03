@@ -36,12 +36,7 @@ namespace scts {
 		}
 	};
 
-	// Annoyingly, we need to handle 8-bit (char) types separately, as those are not treated as numbers by default.
-	template <> struct lexical_caster<char> {
-		template <typename StringLike> static char cast(const StringLike& source) {
-			return static_cast<char>(lexical_caster<std::int16_t>::cast(source));
-		}
-	};
+	// Annoyingly, we need to handle 8-bit types separately, as those are not treated as numbers by default.
 	template <> struct lexical_caster<std::uint8_t> {
 		template <typename StringLike>static std::uint8_t cast(const StringLike& source) {
 			return static_cast<std::uint8_t>(lexical_caster<std::uint16_t>::cast(source));

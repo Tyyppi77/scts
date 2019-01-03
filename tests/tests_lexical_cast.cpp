@@ -10,7 +10,7 @@ TEST_CASE("lexical_cast valid conversions", "[lexical_cast]") {
 		REQUIRE(scts::lexical_cast<int>(std::string("-124")) == -124);
 		REQUIRE(scts::lexical_cast<float>(std::string_view("0.5")) == 0.5f);
 		REQUIRE(scts::lexical_cast<double>("0.0") == 0.0);
-		REQUIRE(scts::lexical_cast<char>("3") == 3);
+		REQUIRE(scts::lexical_cast<char>("3") == '3');
 	}
 
 	SECTION("cstdints are handled properly") {

@@ -12,8 +12,11 @@ struct dummy_formatter {
 	// Called before any actual reading happens. Allows you to strip out any wrappers necessary.
 	static void prepare_read(scts::in_stream&) { }
 	// Deserializes a single member from an input stream containing everything that is left to deserialize.
+	// The version taking in a name needs to only be available if requires_names is true.
 	template <typename T>
 	static void read_member(T&, scts::in_stream&) { }
+	template <typename T>
+	static void read_member(T&, scts::in_stream&, const std::string_view&) { }
 
 	// Writing:
 	// Called before and after writing. Allows you to wrap the serialized data into anything or post-process it.

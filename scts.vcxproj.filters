@@ -8,6 +8,9 @@
     <Filter Include="Tests">
       <UniqueIdentifier>{046244b9-3f36-499c-945f-bacf4f8426fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\JSON">
+      <UniqueIdentifier>{54eb5ef7-f322-4c65-b0f2-7869e9c29f08}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scts\formatters.h">
@@ -34,9 +37,6 @@
     <ClInclude Include="scts\stream.h">
       <Filter>Files</Filter>
     </ClInclude>
-    <ClInclude Include="scts\json_formatter.h">
-      <Filter>Files</Filter>
-    </ClInclude>
     <ClInclude Include="tests\catch.hpp">
       <Filter>Tests</Filter>
     </ClInclude>
@@ -45,6 +45,15 @@
     </ClInclude>
     <ClInclude Include="scts\builtin_types.h">
       <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scts\json_formatter.h">
+      <Filter>Files\JSON</Filter>
+    </ClInclude>
+    <ClInclude Include="scts\json_writer.h">
+      <Filter>Files\JSON</Filter>
+    </ClInclude>
+    <ClInclude Include="scts\json_reader.h">
+      <Filter>Files\JSON</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +64,9 @@
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="tests\tests_lexical_cast.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\tests_json_formatter.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
   </ItemGroup>

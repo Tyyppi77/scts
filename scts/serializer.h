@@ -19,6 +19,13 @@ namespace scts {
 	}
 
 	template <typename O, typename Formatter = scts::json_formatter>
+	inline scts::out_stream serialize(const O& object) {
+		scts::out_stream stream;
+		serialize(object, stream);
+		return stream;
+	}
+
+	template <typename O, typename Formatter = scts::json_formatter>
 	inline O& deserialize(O& object, const scts::in_stream& stream) {
 		static_assert(scts::is_registered_type_v<O>, "cannot deserialize an object type that is not registerd");
 

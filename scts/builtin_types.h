@@ -38,12 +38,12 @@ namespace scts {
 	// Standard library containers and classes.
 	template <typename T>
 	struct is_builtin_type<std::vector<T>, typename std::enable_if_t<is_serializable_v<T>>> : std::true_type { };
-	template <typename T> 
-	struct is_builtin_type<std::optional<T>, typename std::enable_if_t<is_serializable_v<T>>> : std::true_type { };
-	template <typename V> 
-	struct is_builtin_type<std::map<std::string, V>, typename std::enable_if_t<is_serializable_v<V>>> : std::true_type { };
 	template <typename T, std::size_t C> 
 	struct is_builtin_type<std::array<T, C>, typename std::enable_if_t<is_serializable_v<T>>> : std::true_type { };
+	template <typename V> 
+	struct is_builtin_type<std::map<std::string, V>, typename std::enable_if_t<is_serializable_v<V>>> : std::true_type { };
+	template <typename T> 
+	struct is_builtin_type<std::optional<T>, typename std::enable_if_t<is_serializable_v<T>>> : std::true_type { };
 
 	// Standard library smart pointers.
 	template <typename T>

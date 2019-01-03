@@ -92,9 +92,9 @@ namespace scts {
 		}
 
 		template <typename O, typename Formatter>
-		static O& load(O& object, scts::in_stream& stream) {
-			using correct_reader = reader<O, Formatter>;
-			return correct_reader::template read<Members...>(object, stream);
+		static O& load(O& object, scts::in_stream& stream, const name_container& names) {
+			using correct_reader = std::conditional_t<Formatter::requires_names, reader<O, name_container, Formatter>, reader_no_names<O, Formatter>>;
+			return correct_reader::template read<Members...>(object, stream, names, 0);
 		}
 	};
 
@@ -119,7 +119,7 @@ namespace scts {
 		template <typename Formatter>
 		O& load(O& object, scts::in_stream& stream) const {
 			InheritsFrom::template read<O, Formatter>(object, stream);
-			return Members::template load<O, Formatter>(object, stream);
+			return Members::template load<O, Formatter>(object, stream, m_names);
 		}
 
 		const bool has_names;
