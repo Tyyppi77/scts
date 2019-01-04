@@ -108,7 +108,7 @@ namespace scts {
 		template <typename T, std::size_t C>
 		struct builtin_type_writer<T[C]> : builtin_list_writer<T> {
 			static scts::out_stream& write(const T(&values)[C], scts::out_stream& stream, bool is_last) {
-				return write(std::begin(values), std::end(values), stream, is_last);
+				return builtin_list_writer<T>::write(std::begin(values), std::end(values), stream, is_last);
 			}
 		};
 

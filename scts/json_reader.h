@@ -60,7 +60,7 @@ namespace scts {
 				bool is_inside_string = false;
 				for (std::size_t i = start; i < stream.length(); ++i) {
 					const auto current = stream.at(i);
-					if (current == ',' && open_braces == 0) {
+					if (!is_inside_string && current == ',' && open_braces == 0) {
 						return i;
 					}
 					else if (current == '"') {
@@ -121,7 +121,7 @@ namespace scts {
 				auto copy = stream;
 				prepare_stream_for_list_processing(copy);
 				while (!copy.empty()) {
-					const auto section = read_next_section_and_consume_stream(copy, 0);
+					const auto section = read_next_section_and_consume_stream(copy, 0, 0);
 					T value{};
 					read_value(value, section);
 					vector.push_back(value);
@@ -135,7 +135,7 @@ namespace scts {
 				auto copy = stream;
 				prepare_stream_for_list_processing(copy);
 				for (std::size_t i = 0; i < array.size(); ++i) {
-					const auto section = read_next_section_and_consume_stream(copy, 0);
+					const auto section = read_next_section_and_consume_stream(copy, 0, 0);
 					read_value(array.at(i), section);
 				}
 			}
@@ -152,7 +152,7 @@ namespace scts {
 					const auto name_source = copy.substr(0, name_end);
 					copy.erase(0, name_end + 1);
 					const auto name = remove_quotes_from_string(name_source);
-					const auto section = read_next_section_and_consume_stream(copy, 0);
+					const auto section = read_next_section_and_consume_stream(copy, 0, 0);
 					V value{};
 					read_value(value, section);
 					map.insert(std::make_pair(name, value));
@@ -187,7 +187,7 @@ namespace scts {
 				auto copy = stream;
 				prepare_stream_for_list_processing(copy);
 				for (std::size_t i = 0; i < C; ++i) {
-					const auto section = read_next_section_and_consume_stream(copy, 0);
+					const auto section = read_next_section_and_consume_stream(copy, 0, 0);
 					read_value(array[i], section);
 				}
 			}
