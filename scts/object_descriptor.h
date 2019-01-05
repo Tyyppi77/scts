@@ -10,56 +10,56 @@
 namespace scts {
 	template <typename... Parents>
 	struct inherits_from {
-		template <typename O, typename Formatter>
-		static void write(const O& object, scts::out_stream& stream) {
-			write_detail::template write<O, Formatter, Parents...>(object, stream);
+		template <typename Formatter, typename O>
+		static void write(Formatter& formatter, const O& object, scts::out_stream& stream) {
+			write_detail::template write<Formatter, O, Parents...>(formatter, object, stream);
 		}
 
-		template <typename O, typename Formatter>
-		static void read(O& object, scts::in_stream& stream) {
-			read_detail::template read<O, Formatter, Parents...>(object, stream);
+		template <typename Formatter, typename O>
+		static void read(Formatter& formatter, O& object, scts::in_stream& stream) {
+			read_detail::template read<Formatter, O, Parents...>(formatter, object, stream);
 		}
 	private:
 		struct write_detail {
-			template <typename O, typename Formatter>
-			static void write(const O&, scts::out_stream&) { }
+			template <typename Formatter, typename O>
+			static void write(Formatter&, const O&, scts::out_stream&) { }
 
-			template <typename O, typename Formatter, typename Parent>
-			static void write(const O& object, scts::out_stream& stream) {
-				write_parent<O, Formatter, Parent>(object, stream);
+			template <typename Formatter, typename O, typename Parent>
+			static void write(Formatter& formatter, const O& object, scts::out_stream& stream) {
+				write_parent<Formatter, O, Parent>(formatter, object, stream);
 			}
 
-			template <typename O, typename Formatter, typename Parent, typename Second, typename... Rest>
-			static void write(const O& object, scts::out_stream& stream) {
-				write_parent<O, Formatter, Parent>(object, stream);
-				write<O, Second, Rest...>(object, stream);
+			template <typename Formatter, typename O, typename Parent, typename Second, typename... Rest>
+			static void write(Formatter& formatter, const O& object, scts::out_stream& stream) {
+				write_parent<Formatter, O, Parent>(formatter, object, stream);
+				write<Formatter, O, Second, Rest...>(formatter, object, stream);
 			}
 
-			template <typename O, typename Formatter, typename Parent>
-			static void write_parent(const O& object, scts::out_stream& stream) {
-				scts::register_type<Parent>::descriptor.save<Formatter>(object, stream);
-				stream << ",";
+			template <typename Formatter, typename O, typename Parent>
+			static void write_parent(Formatter& formatter, const O& object, scts::out_stream& stream) {
+				scts::register_type<Parent>::descriptor.save(formatter, object, stream);
+				formatter.write_inherited_object_separator(stream);
 			}
 		};
 
 		struct read_detail {
-			template <typename O, typename Formatter>
-			static void read(O&, scts::in_stream&) { }
+			template <typename Formatter, typename O>
+			static void read(Formatter&, O&, scts::in_stream&) { }
 
-			template <typename O, typename Formatter, typename Parent>
-			static void read(O& object, scts::in_stream& stream) {
-				read_parent<O, Formatter, Parent>(object, stream);
+			template <typename Formatter, typename O, typename Parent>
+			static void read(Formatter& formatter, O& object, scts::in_stream& stream) {
+				read_parent<Formatter, O, Parent>(formatter, object, stream);
 			}
 
-			template <typename O, typename Formatter, typename Parent, typename Second, typename... Rest>
-			static void read(O& object, scts::in_stream& stream) {
-				read_parent<O, Formatter, Parent>(object, stream); 
-				read<O, Formatter, Second, Rest...>(object, stream);
+			template <typename Formatter, typename O, typename Parent, typename Second, typename... Rest>
+			static void read(Formatter& formatter, O& object, scts::in_stream& stream) {
+				read_parent<Formatter, O, Parent>(formatter, object, stream); 
+				read<Formatter, O, Second, Rest...>(formatter, object, stream);
 			}
 
-			template <typename O, typename Formatter, typename Parent>
-			static void read_parent(O& object, scts::in_stream& stream) {
-				scts::register_type<Parent>::descriptor.load<Formatter>(object, stream);
+			template <typename Formatter, typename O, typename Parent>
+			static void read_parent(Formatter& formatter, O& object, scts::in_stream& stream) {
+				scts::register_type<Parent>::descriptor.load(formatter, object, stream);
 			}
 		};
 	};
@@ -85,16 +85,16 @@ namespace scts {
 		static constexpr auto member_count = sizeof...(Members);
 		using name_container = std::array<std::string_view, member_count>;
 
-		template <typename O, typename Formatter>
-		static scts::out_stream& save(const O& object, scts::out_stream& stream, const name_container& names) {
-			using correct_writer = std::conditional_t<Formatter::requires_names, writer<O, name_container, Formatter>, writer_no_names<O, Formatter>>;
-			return correct_writer::template write<Members...>(object, stream, names, 0);
+		template <typename Formatter, typename O>
+		static scts::out_stream& save(Formatter& formatter, const O& object, scts::out_stream& stream, const name_container& names) {
+			using correct_writer = std::conditional_t<formatter.requires_names, writer<O, name_container>, writer_no_names<O>>;
+			return correct_writer::template write<Formatter, Members...>(formatter, object, stream, names, 0);
 		}
 
-		template <typename O, typename Formatter>
-		static O& load(O& object, scts::in_stream& stream, const name_container& names) {
-			using correct_reader = std::conditional_t<Formatter::requires_names, reader<O, name_container, Formatter>, reader_no_names<O, Formatter>>;
-			return correct_reader::template read<Members...>(object, stream, names, 0);
+		template <typename Formatter, typename O>
+		static O& load(Formatter& formatter, O& object, scts::in_stream& stream, const name_container& names) {
+			using correct_reader = std::conditional_t<formatter.requires_names, reader<O, name_container>, reader_no_names<O>>;
+			return correct_reader::template read<Formatter, Members...>(formatter, object, stream, names, 0);
 		}
 	};
 
@@ -111,15 +111,15 @@ namespace scts {
 		}
 
 		template <typename Formatter>
-		scts::out_stream& save(const O& object, scts::out_stream& stream) const {
-			InheritsFrom::template write<O, Formatter>(object, stream);
-			return Members::template save<O, Formatter>(object, stream, m_names);
+		scts::out_stream& save(Formatter& formatter, const O& object, scts::out_stream& stream) const {
+			InheritsFrom::write(formatter, object, stream);
+			return Members::save(formatter, object, stream, m_names);
 		}
 
 		template <typename Formatter>
-		O& load(O& object, scts::in_stream& stream) const {
-			InheritsFrom::template read<O, Formatter>(object, stream);
-			return Members::template load<O, Formatter>(object, stream, m_names);
+		O& load(Formatter& formatter, O& object, scts::in_stream& stream) const {
+			InheritsFrom::read(formatter, object, stream);
+			return Members::load(formatter, object, stream, m_names);
 		}
 
 		const bool has_names;

@@ -228,7 +228,8 @@ namespace scts {
 		static typename std::enable_if<!is_builtin_type<T>::value, void>::type read_value(T& member, const scts::in_stream& stream) {
 			auto copy = stream;
 			prepare_read(copy);
-			scts::register_type<T>::descriptor.load<json_reader>(member, copy);
+			auto formatter = json_reader{};
+			scts::register_type<T>::descriptor.load(formatter, member, copy);
 		}
 	};
 }

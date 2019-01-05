@@ -10,34 +10,37 @@
 
 namespace scts {
 	template <typename O, typename Formatter = scts::json_formatter>
-	inline scts::out_stream& serialize(const O& object, scts::out_stream& stream) {
+	inline scts::out_stream& serialize(const O& object, scts::out_stream& stream, Formatter formatter = Formatter()) {
 		static_assert(scts::is_registered_type_v<O>, "cannot serialize an object type that is not registerd");
-		Formatter::prepare_write(stream);
-		scts::register_type<O>::descriptor.save<Formatter>(object, stream);
-		Formatter::post_write(stream);
+		static_assert(scts::is_valid_formatter_v<Formatter>, "formatter needs to be a valid formatter");
+
+		formatter.prepare_write(stream);
+		scts::register_type<O>::descriptor.save(formatter, object, stream);
+		formatter.post_write(stream);
 		return stream;
 	}
 
 	template <typename O, typename Formatter = scts::json_formatter>
-	inline scts::out_stream serialize(const O& object) {
+	inline scts::out_stream serialize(const O& object, Formatter formatter = Formatter()) {
 		scts::out_stream stream;
-		serialize(object, stream);
+		serialize(object, stream, formatter);
 		return stream;
 	}
 
 	template <typename O, typename Formatter = scts::json_formatter>
-	inline O& deserialize(O& object, const scts::in_stream& stream) {
+	inline O& deserialize(O& object, const scts::in_stream& stream, Formatter formatter = Formatter()) {
 		static_assert(scts::is_registered_type_v<O>, "cannot deserialize an object type that is not registerd");
+		static_assert(scts::is_valid_formatter_v<Formatter>, "formatter needs to be a valid formatter");
 
 		auto copy = stream;
-		Formatter::prepare_read(copy);
-		return scts::register_type<O>::descriptor.load<Formatter>(object, copy);
+		formatter.prepare_read(copy);
+		return scts::register_type<O>::descriptor.load(formatter, object, copy);
 	}
 
 	template <typename O, typename Formatter = scts::json_formatter>
-	inline O deserialize(const scts::in_stream& stream) {
+	inline O deserialize(const scts::in_stream& stream, Formatter formatter = Formatter()) {
 		O object;
-		deserialize(object, stream);
+		deserialize(object, stream, formatter);
 		return object;
 	}
 }

@@ -72,6 +72,17 @@ TEST_CASE("basic human written json", "[json_formatter]") {
 	REQUIRE(a == expected);
 }
 
+TEST_CASE("pretty formatting", "[json_formatter]") {
+	const auto expected = R"({
+	"data": 10.5,
+	"integer": -15
+})";
+	base_object a{ 10.5, -15 };
+	scts::json_formatter formatter{ scts::json_writer::pretty_with_tabs };
+	auto stream = scts::serialize(a, formatter);
+	REQUIRE(stream.str() == expected);
+}
+
 enum class state {
 	idle, moving
 };
