@@ -7,8 +7,8 @@
 
 namespace scts {
 	struct invalid_lexical_cast : std::exception {
-		invalid_lexical_cast(const std::string& string) : m_String(string) { }
-		const char* what() const noexcept { return ("Invalid lexical_cast source: " + m_String).c_str(); }
+		invalid_lexical_cast(const std::string& string) : m_String("Invalid lexical_cast source: " + string) { }
+		const char* what() const override { return m_String.c_str(); }
 	private:
 		const std::string m_String;
 	};
@@ -50,7 +50,6 @@ namespace scts {
 
 	template <typename T, typename StringLike>
 	inline typename std::enable_if<std::is_arithmetic<T>::value, T>::type lexical_cast(const StringLike& source) {
-
 		return lexical_caster<T>::cast(source);
 	}
 }
