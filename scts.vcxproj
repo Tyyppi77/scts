@@ -170,6 +170,7 @@
     <ClCompile Include="tests\tests_lexical_cast.cpp" />
     <ClCompile Include="tests\tests_main.cpp" />
     <ClCompile Include="tests\tests_object_descriptor.cpp" />
+    <ClCompile Include="tests\tests_value_as_binary.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scts\builtin_types.h" />
@@ -185,6 +186,7 @@
     <ClInclude Include="scts\scts.h" />
     <ClInclude Include="scts\serializer.h" />
     <ClInclude Include="scts\stream.h" />
+    <ClInclude Include="scts\value_as_binary.h" />
     <ClInclude Include="tests\catch.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -11,6 +11,9 @@
     <Filter Include="Files\JSON">
       <UniqueIdentifier>{54eb5ef7-f322-4c65-b0f2-7869e9c29f08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\Binary">
+      <UniqueIdentifier>{58477df9-c3fc-414d-8af8-50c1eb81e174}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scts\formatters.h">
@@ -55,6 +58,9 @@
     <ClInclude Include="scts\json_reader.h">
       <Filter>Files\JSON</Filter>
     </ClInclude>
+    <ClInclude Include="scts\value_as_binary.h">
+      <Filter>Files\Binary</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tests\tests_main.cpp">
@@ -67,6 +73,9 @@
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="tests\tests_json_formatter.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\tests_value_as_binary.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
   </ItemGroup>
