@@ -8,7 +8,7 @@ T write_and_read(T value) {
 	scts::out_stream stream;
 	as_binary.write(stream);
 	auto in_stream = stream.get_in_stream();
-	return scts::value_as_binary<T>::read(in_stream);
+	return scts::value_as_binary<T>(in_stream).value();
 }
 
 TEST_CASE("value as binary conversion", "[value_as_binary]") {

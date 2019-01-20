@@ -173,6 +173,8 @@
     <ClCompile Include="tests\tests_value_as_binary.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="scts\binary_formatter.h" />
+    <ClInclude Include="scts\binary_writer.h" />
     <ClInclude Include="scts\builtin_types.h" />
     <ClInclude Include="scts\formatters.h" />
     <ClInclude Include="scts\helpers.h" />
