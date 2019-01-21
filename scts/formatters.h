@@ -46,3 +46,4 @@ namespace scts {
 }
 
 #include "json_formatter.h"
+#include "binary_formatter.h"

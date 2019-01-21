@@ -1,9 +1,10 @@
 #pragma once
 
 #include "stream.h"
+#include "binary_writer.h"
 
 namespace scts {
-	struct binary_formatter {
+	struct binary_formatter : binary_writer {
 		static constexpr bool requires_names = false;
 
 		// We do not need to pre or post handle writing or reading.
@@ -15,10 +16,5 @@ namespace scts {
 
 		template <typename T>
 		static void read_member(T& member, scts::in_stream& stream) { }
-
-		template <typename T>
-		static scts::out_stream& write_member(const T& member, scts::out_stream& stream, bool is_last) {
-			return stream;
-		}
 	};
 }

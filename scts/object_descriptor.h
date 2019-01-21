@@ -87,14 +87,24 @@ namespace scts {
 
 		template <typename Formatter, typename O>
 		static scts::out_stream& save(Formatter& formatter, const O& object, scts::out_stream& stream, const name_container& names) {
-			using correct_writer = std::conditional_t<formatter.requires_names, writer<O, name_container>, writer_no_names<O>>;
-			return correct_writer::template write<Formatter, Members...>(formatter, object, stream, names, 0);
+			if constexpr (formatter.requires_names) {
+				return writer<O, name_container>::template write<Formatter, Members...>(formatter, object, stream, names, 0);
+			}
+			else {
+				names;
+				return writer_no_names<O>::template write<Formatter, Members...>(formatter, object, stream);
+			}
 		}
 
 		template <typename Formatter, typename O>
 		static O& load(Formatter& formatter, O& object, scts::in_stream& stream, const name_container& names) {
-			using correct_reader = std::conditional_t<formatter.requires_names, reader<O, name_container>, reader_no_names<O>>;
-			return correct_reader::template read<Formatter, Members...>(formatter, object, stream, names, 0);
+			if constexpr (formatter.requires_names) {
+				return reader<O, name_container>::template read<Formatter, Members...>(formatter, object, stream, names, 0);
+			}
+			else {
+				names;
+				return reader_no_names<O>::template read<Formatter, Members...>(formatter, object, stream);
+			}
 		}
 	};
 

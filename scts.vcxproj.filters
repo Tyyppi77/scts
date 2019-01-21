@@ -67,6 +67,9 @@
     <ClInclude Include="scts\binary_writer.h">
       <Filter>Files\Binary</Filter>
     </ClInclude>
+    <ClInclude Include="tests\test_objects.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tests\tests_main.cpp">
@@ -82,6 +85,9 @@
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="tests\tests_value_as_binary.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\tests_binary_formatter.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
   </ItemGroup>
